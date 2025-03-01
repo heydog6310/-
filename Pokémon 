@@ -1,1 +1,68 @@
-hihi
+class MarsRover {
+    constructor(gridSize, startX, startY) {
+        this.gridSize = gridSize; // 火星地圖大小 NxN
+        this.x = startX; // 探測車初始 X 位置
+        this.y = startY; // 探測車初始 Y 位置
+        this.direction = "E"; // 初始方向 (E = 東, W = 西, N = 北, S = 南)
+        this.obstacles = new Set(); // 記錄障礙物位置
+        console.log(`🚀 探測車啟動，初始位置: (${this.x}, ${this.y})，方向: ${this.direction}`);
+    }
+
+    // 新增障礙物
+    addObstacle(x, y) {
+        this.obstacles.add(`${x},${y}`);
+        console.log(`🪨 障礙物設置於: (${x}, ${y})`);
+    }
+
+    // 計算下一步的位置
+    getNextPosition() {
+        let nextX = this.x, nextY = this.y;
+        if (this.direction === "E") nextX += 1;
+        else if (this.direction === "W") nextX -= 1;
+        else if (this.direction === "N") nextY -= 1;
+        else if (this.direction === "S") nextY += 1;
+        return [nextX, nextY];
+    }
+
+    // 檢查前方是否有障礙物
+    isObstacleAhead() {
+        let [nextX, nextY] = this.getNextPosition();
+        return this.obstacles.has(`${nextX},${nextY}`);
+    }
+
+    // 變更方向 (順時針旋轉)
+    turnRight() {
+        const directions = ["N", "E", "S", "W"];
+        let index = directions.indexOf(this.direction);
+        this.direction = directions[(index + 1) % 4];
+        console.log(`🔄 轉向至: ${this.direction}`);
+    }
+
+    // 探測車移動 (遇到障礙物則右轉)
+    move() {
+        if (this.isObstacleAhead()) {
+            console.log(`⚠️ 前方有障礙物！嘗試轉向`);
+            this.turnRight();
+        } else {
+            let [newX, newY] = this.getNextPosition();
+            this.x = newX;
+            this.y = newY;
+            console.log(`🚗 探測車移動至: (${this.x}, ${this.y})，方向: ${this.direction}`);
+        }
+    }
+
+    // 連續移動測試
+    autoNavigate(steps) {
+        console.log("=== 🔴 自動避障測試開始 ===");
+        for (let i = 0; i < steps; i++) {
+            this.move();
+        }
+        console.log("=== 🟢 測試結束 ===");
+    }
+}
+
+// 🔥 測試火星探測車避障系統
+const rover = new MarsRover(10, 0, 0);
+rover.addObstacle(2, 0); // 在 (2,0) 放置障礙物
+rover.addObstacle(3, 1); // 在 (3,1) 放置障礙物
+rover.autoNavigate(10); // 自動導航 10 步
